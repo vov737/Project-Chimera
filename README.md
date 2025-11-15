@@ -1,6 +1,6 @@
 # Project-Chimera
 
-На русском: Это кодовый проект моего браузера под названием WindBrowser, должен выйти около зимы-весны 2026 года. Функции раскрою позже, но скажу что там используется собственный движок рендеринга.
+На русском: Это кодовый проект моего браузера под названием WindBrowser, должен выйти около зимы 2026 года. Функции раскрою позже, но скажу что там используется собственный движок рендеринга.
 
 Лицензия: Apache-2.0
 
@@ -10,7 +10,7 @@
 
 
 
-In English (Google Translate): This is the codebase for my browser, called WindBrowser, scheduled for release sometime in winter or spring 2026.
+In English (Google Translate): This is the codebase for my browser, called WindBrowser, scheduled for release sometime in winter 2026.
 
 I'll reveal the features later, but I'll say it uses a custom rendering engine.
 
