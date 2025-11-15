@@ -66,8 +66,6 @@ HTML_ABOUT = """
 <body><h1>О нас</h1><p>Project Chimera v0.2.0. A monster project in pure Python.</p></body>
 </html>
 
-# --- Генератор Внутренних Страниц ---
-
 def generate_wind_about_page() -> str:
     """Generating HTML for wind://about with Easter egg."""
     libs_list = "".join([f"<li>{lib}</li>" for lib in REQUIRED_LIBS])
@@ -86,35 +84,33 @@ def generate_wind_about_page() -> str:
 """
 
 def generate_wind_flags_page() -> str:
-    """Генерирует HTML для wind://flags (экспериментальные функции)."""
+    """Generates HTML for wind://flags (experimental)."""
     return f"""
 <!DOCTYPE html>
 <html>
-<head><title>Экспериментальные настройки</title></head>
+<head><title>Experimental settings/flags</title></head>
 <body>
-    <h1>🧪 Экспериментальные функции Chimera</h1>
-    <p>Здесь вы можете включать и отключать функции, которые еще не готовы к публичному релизу.</p>
+    <h1> Experimental features Chimera</h1>
+    <p>Here you can enable or disable features that are not yet ready for public release.</p>
     <ul>
-        <li>**CSS Box Model (disabled):** Включить полную поддержку margin/padding.</li>
-        <li>**WebP Support (disabled):** Включить поддержку формата WebP.</li>
+        <li>**CSS Box Model (disabled):** Enables full support margin/padding.</li>
+        <li>**WebP Support (disabled):** Enable support WebP.</li>
     </ul>
-    <p>Текущая версия: {VERSION}</p>
+    <p>Current version: {VERSION}</p>
 </body>
 </html>
 """
 
-# --- МОДЕЛИ PYDANTIC ---
 class BrowserConfig(BaseModel):
-    default_timeout: int = Field(default=5, description="Таймаут для сетевых запросов.")
-    layout_margin_px: int = Field(default=8, description="Стандартный вертикальный отступ между блоками.")
-    log_lines_to_show: int = Field(default=4, description="Количество видимых строк лога.")
+    default_timeout: int = Field(default=5, description="Timeout for network requests.")
+    layout_margin_px: int = Field(default=8, description="Standard vertical indentation between blocks.")
+    log_lines_to_show: int = Field(default=4, description="Number of visible log lines.")
 
 class RenderCommand(BaseModel):
     tag: str; type: str; x: int; y: int; height: int; font: int = FL_HELVETICA; size: int = 14; color: int = FL_BLACK
     text: str = ""; text_align: str = "left"; bg_color: Optional[int] = None; fl_img_ref: Optional[object] = None; width: int = 0; border: int = 0
 CONFIG = BrowserConfig() 
 
-# --- Менеджер Истории ---
 class HistoryManager:
     def __init__(self, start_url: str): self.back_stack = deque([start_url]); self.forward_stack = deque(); self.current_url = start_url
     def can_go_back(self): return len(self.back_stack) > 1
@@ -131,8 +127,6 @@ class HistoryManager:
 history_manager = HistoryManager(URL_HOME)
 BROWSER_COOKIE_JAR = RequestsCookieJar()
 
-# --- КАСТОМНЫЙ ВИДЖЕТ: LAYOUT ENGINE ---
-
 class HTMLRendererWidget(Fl_Widget):
     def __init__(self, x, y, w, h, html_content):
         super().__init__(x, y, w, h)
@@ -148,9 +142,8 @@ class HTMLRendererWidget(Fl_Widget):
         
     def _load_and_process_image(self, url: str) -> Optional[Fl_RGB_Image]:
         try:
-            # БЕЗОПАСНОСТЬ: Проверка схемы перед сетевым вызовом
             if not url.startswith(('http://', 'https://')):
-                self.log(f"  [Security] Блокирован небезопасный URL для изображения: {url[:15]}...")
+                self.log(f"  [Security] Insecure URL for image blocked: {url[:15]}...")
                 return None
             
             Fl.set_cursor(FL_CURSOR_WAIT)
@@ -169,7 +162,7 @@ class HTMLRendererWidget(Fl_Widget):
             return fl_img
         except Exception as e:
             Fl.set_cursor(FL_CURSOR_DEFAULT)
-            self.log(f"  Ошибка загрузки/декодирования изображения: {e}")
+            self.log(f"  Error loading/decoding image: {e}")
             return None
             
     def parse_and_layout(self):
@@ -194,7 +187,7 @@ class HTMLRendererWidget(Fl_Widget):
             }
             
             cursor_y = self.y() + margin; x_start = self.x() + margin
-            block_tags = ('h1', 'h2', 'p', 'article', 'section', 'a', 'li') # ul обрабатывается как контейнер
+            block_tags = ('h1', 'h2', 'p', 'article', 'section', 'a', 'li')
             
             for element in root.xpath('//body//*'): 
                 tag = element.tag
@@ -204,7 +197,7 @@ class HTMLRendererWidget(Fl_Widget):
                     text = element.text_content().strip()
                     if not text: continue
                     
-                    if tag == 'li': text = "• " + text # Простой маркер для списка
+                    if tag == 'li': text = "• " + text
                     
                     text_align = style_defaults.get('text-align', 'left')
                     bg_color = style_defaults.get('background-color')
@@ -259,7 +252,7 @@ class HTMLRendererWidget(Fl_Widget):
                         cursor_y += 20 
 
         except Exception as e:
-            self.log(f"Ошибка LXML/Layout: {e}")
+            self.log(f"LXML/Layout Error: {e}")
         finally:
             Fl.set_cursor(FL_CURSOR_DEFAULT)
 
@@ -305,21 +298,17 @@ class HTMLRendererWidget(Fl_Widget):
 
         fl_pop_clip()
 
-# --- ФУНКЦИИ БРАУЗЕРА ---
-
 def fetch_content_by_url(url: str) -> str:
-    """Обработка http(s):// и wind:// схем."""
+    """Processing http(s):// and wind:// schemes."""
     
-    # БЕЗОПАСНОСТЬ: Проверка допустимых схем URL (wind://, http://, https://)
     if not url.startswith(('http://', 'https://', 'wind://')):
-        return f"<body><h1>Ошибка URL</h1><p>Блокирована недопустимая схема: {url[:20]}...</p></body>"
+        return f"<body><h1>URL error</h1><p>Invalid schema blocked: {url[:20]}...</p></body>"
 
     if url.startswith('wind://'):
         if url == URL_WIND_ABOUT: return generate_wind_about_page()
         if url == URL_WIND_FLAGS: return generate_wind_flags_page()
-        return f"<body><h1>Ошибка wind://</h1><p>Внутренняя страница не найдена: {url}</p></body>"
+        return f"<body><h1>Scheme wind:// error</h1><p>Internal page not found: {url}</p></body>"
 
-    # Обработка демонстрационных http(s) URL
     if "about" in url: return HTML_ABOUT
     if "contact" in url: return HTML_CONTACT
     return HTML_HOME
@@ -339,18 +328,15 @@ def fetch_and_render(url: str, is_history_action: bool = False):
     update_nav_buttons()
 
 def run_full_demo_callback(widget):
-    """Демонстрация работы Crypto, JS (ES5.1) и Куки."""
+    """Demonstration of Crypto, JS (ES5.1) and Cookies."""
     renderer.log_messages.clear()
     
-    # --- 0. Куки: Установка ---
-    renderer.log("--- 0. Куки: Установка ---")
+    renderer.log("--- 0. Cookies: Installing ---")
     # ... (Логика установки куки) ...
     
-    # --- 1. 'cryptography' ---
     renderer.log("\n--- 1. 'cryptography' ---")
-    # ... (Логика хеширования) ...
+    # ... (Hashing logic) ...
     
-    # --- 2. 'Js2Py' (Execution: ES5.1) ---
     renderer.log("\n--- 2. 'Js2Py' (ES5.1) ---")
     try:
         js_code = """
@@ -364,11 +350,9 @@ def run_full_demo_callback(widget):
         context.execute(js_code)
         renderer.log(f"  Js2Py: js_variable='{context.js_variable}', Keys count={context.calculation}")
     except Exception as e:
-        renderer.log(f"  Js2Py Ошибка: {e}")
+        renderer.log(f"  Js2Py Error: {e}")
 
-    renderer.redraw() 
-
-# --- ФУНКЦИИ GUI ---
+    renderer.redraw()
 
 def update_nav_buttons():
     back_button.deactivate() if not history_manager.can_go_back() else back_button.activate()
@@ -384,8 +368,6 @@ def nav_button_callback(widget):
     url = URL_ABOUT if widget.label() == "About" else URL_CONTACT; 
     fetch_and_render(url)
 def demo_button_callback(widget): run_full_demo_callback(widget)
-
-# --- Инициализация GUI ---
 
 window = Fl_Window(700, 600, f"Project Chimera {VERSION} (Security Upgrade)")
 window.begin()
