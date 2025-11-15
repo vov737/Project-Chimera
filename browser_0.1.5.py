@@ -13,38 +13,34 @@ from pydantic import BaseModel, Field
 from collections import deque
 from typing import List, Optional
 
-# --- КОНСТАНТЫ И НАСТРОЙКИ ---
 TEST_IMAGE_URL = "http://httpbin.org/image/png"
 TEST_COOKIE_URL = "http://httpbin.org/cookies/set/session_id/abc12345" 
 IMAGE_SIZE = (100, 100) 
 CELL_WIDTH = 150 
 
-# URLs для демонстрации истории
 URL_HOME = "http://example.com/home"
 URL_ABOUT = "http://example.com/about"
 URL_CONTACT = "http://example.com/contact"
-
-# --- HTML-Контент для Демонстрации ---
 
 HTML_HOME = f"""
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Домашняя (HTML5, CSS)</title>
+    <title>Homepage (HTML5, CSS)</title>
 </head>
 <body>
     <h1>Layout Engine: v0.1.5</h1>
     
-    <section>Это новый HTML5 тег 'section'. (Центрирование текста)</section>
+    <section>It's a new HTML5 tag 'section'. (Centering text)</section>
     
     <article>
-        <p>А это тег 'article' с параграфом. (Желтый фон)</p>
+        <p>It's tag 'article' with paragraph. (Yellow background)</p>
     </article>
     
-    <h2>Пример Таблицы</h2>
+    <h2>Example of the table</h2>
     <table border="1">
         <tr>
-            <td>Ячейка 1.1</td>
+            <td>Cell 1.1</td>
             <td><img src="{TEST_IMAGE_URL}" width="50" height="50" /></td>
         </tr>
     </table>
@@ -55,30 +51,17 @@ HTML_HOME = f"""
 HTML_ABOUT = """
 <!DOCTYPE html>
 <html>
-<head><title>О Проекте</title></head>
+<head><title>About project</title></head>
 <body>
-    <h1>О нас</h1>
-    <p>Project Chimera v0.1.5. Проект-монстр на чистом Python.</p>
+    <h1>About us</h1>
+    <p>Project Chimera v0.1.5. A monster project in pure Python.</p>
 </body>
 </html>
-"""
-HTML_CONTACT = """
-<!DOCTYPE html>
-<html>
-<head><title>Связь</title></head>
-<body>
-    <h1>Контакты</h1>
-    <p>Свяжитесь с нами.</p>
-</body>
-</html>
-"""
-
-# --- МОДЕЛИ PYDANTIC ---
 
 class BrowserConfig(BaseModel):
-    default_timeout: int = Field(default=5, description="Таймаут для сетевых запросов.")
-    layout_margin_px: int = Field(default=8, description="Стандартный вертикальный отступ между блоками.")
-    log_lines_to_show: int = Field(default=4, description="Количество видимых строк лога.")
+    default_timeout: int = Field(default=5, description="Timeout for network requests.")
+    layout_margin_px: int = Field(default=8, description="Standard vertical indentation between blocks.")
+    log_lines_to_show: int = Field(default=4, description="Number of visible log lines.")
 
 class RenderCommand(BaseModel):
     tag: str
@@ -91,18 +74,14 @@ class RenderCommand(BaseModel):
     size: int = 14
     color: int = FL_BLACK
     text: str = ""
-    
-    # НОВЫЕ СТИЛИ CSS:
     text_align: str = "left"  # 'left', 'center'
-    bg_color: Optional[int] = None # Цвет фона FLTK 
+    bg_color: Optional[int] = None
     
     fl_img_ref: Optional[object] = None 
     width: int = 0
     border: int = 0
 
 CONFIG = BrowserConfig() 
-
-# --- Менеджер Истории ---
 
 class HistoryManager:
     def __init__(self, start_url: str):
@@ -137,8 +116,6 @@ class HistoryManager:
 history_manager = HistoryManager(URL_HOME)
 BROWSER_COOKIE_JAR = RequestsCookieJar()
 
-# --- КАСТОМНЫЙ ВИДЖЕТ: LAYOUT ENGINE ---
-
 class HTMLRendererWidget(Fl_Widget):
     def __init__(self, x, y, w, h, html_content):
         super().__init__(x, y, w, h)
@@ -150,16 +127,15 @@ class HTMLRendererWidget(Fl_Widget):
         self.parse_and_layout()
 
     def log(self, message):
-        """Добавление сообщения в лог с прокруткой."""
+        """Adding a message to the log with scrolling."""
         self.log_messages.append(message)
-        # НОВОЕ: Простейшая логика прокрутки (удаляем старые сообщения)
         if len(self.log_messages) > CONFIG.log_lines_to_show:
             self.log_messages.pop(0)
         self.redraw()
         
     def _load_and_process_image(self, url: str) -> Optional[Fl_RGB_Image]:
         try:
-            Fl.set_cursor(FL_CURSOR_WAIT) # НОВОЕ: Курсор ожидания
+            Fl.set_cursor(FL_CURSOR_WAIT)
             img_resp = requests.get(url, cookies=BROWSER_COOKIE_JAR, timeout=CONFIG.default_timeout)
             Fl.set_cursor(FL_CURSOR_DEFAULT)
             img_resp.raise_for_status()
@@ -176,12 +152,12 @@ class HTMLRendererWidget(Fl_Widget):
 
         except Exception as e:
             Fl.set_cursor(FL_CURSOR_DEFAULT)
-            self.log(f"  Ошибка загрузки/декодирования изображения: {e}")
+            self.log(f"  Error loading/decoding image: {e}")
             return None
             
     def parse_and_layout(self):
-        """Парсинг, включая поиск TITLE, HTML5-теги и логику таблиц."""
-        Fl.set_cursor(FL_CURSOR_WAIT) # НОВОЕ: Курсор ожидания
+        """Parsing, including TITLE search, HTML5 tags, and table logic."""
+        Fl.set_cursor(FL_CURSOR_WAIT)
         self.render_commands = []
         self.title = "No Title"
         try:
@@ -276,9 +252,9 @@ class HTMLRendererWidget(Fl_Widget):
                         cursor_y += 20 
 
         except Exception as e:
-            self.log_messages.append(f"Ошибка LXML/Layout: {e}")
+            self.log_messages.append(f"LXML/Layout Error: {e}")
         finally:
-            Fl.set_cursor(FL_CURSOR_DEFAULT) # НОВОЕ: Сброс курсора
+            Fl.set_cursor(FL_CURSOR_DEFAULT)
 
     def draw(self):
         fl_push_clip(self.x(), self.y(), self.w(), self.h())
@@ -318,19 +294,15 @@ class HTMLRendererWidget(Fl_Widget):
                     img: Fl_RGB_Image = command.fl_img_ref
                     img.draw(command.x + CONFIG.layout_margin_px, command.y + CONFIG.layout_margin_px)
 
-        # 2. Рисуем лог (Используем список log_messages)
         log_y_start = self.y() + self.h() - 100 
         fl_color(FL_DARK_RED)
         fl_font(FL_COURIER, 12)
         fl_draw("--- Лог (для crypto, js2py) ---", self.x() + 5, log_y_start)
-        
-        # Выводим только видимые строки из списка
         for i, msg in enumerate(self.log_messages):
             fl_draw(msg, self.x() + 5, log_y_start + 20 + i * 14)
 
         fl_pop_clip()
 
-# --- ФУНКЦИИ БРАУЗЕРА ---
 
 def fetch_content_by_url(url: str) -> str:
     if "about" in url: return HTML_ABOUT
@@ -343,37 +315,30 @@ def fetch_and_render(url: str, is_history_action: bool = False):
     if not is_history_action: history_manager.navigate_to(url)
     address_input.value(history_manager.current_url)
 
-    # 1. Получаем контент
     page_html = fetch_content_by_url(history_manager.current_url)
-        
-    # 2. Рендеринг (курсор ожидания включится внутри parse_and_layout)
+
     renderer.html_content = page_html
     renderer.parse_and_layout()
     renderer.redraw()
-    
-    # 3. Устанавливаем заголовок окна
+
     window.label(f"Project Chimera v0.1.5 - {renderer.title}")
-    
-    # 4. Обновление GUI
     update_nav_buttons()
 
 def run_full_demo_callback(widget):
-    """Демонстрация работы Crypto, JS (ES5.1) и Куки."""
+    """Demonstration of Crypto, JS (ES5.1) and Cookies."""
     renderer.log_messages.clear()
     
-    # --- 0. Куки: Установка ---
-    renderer.log("--- 0. Куки: Установка ---")
+    renderer.log("--- 0. Cookies: Installation ---")
     try:
         Fl.set_cursor(FL_CURSOR_WAIT)
         requests.get(TEST_COOKIE_URL, cookies=BROWSER_COOKIE_JAR, timeout=CONFIG.default_timeout)
         Fl.set_cursor(FL_CURSOR_DEFAULT)
-        renderer.log(f"  Установлена тестовая кука: {BROWSER_COOKIE_JAR.get('session_id')}")
+        renderer.log(f"  Test cookie installed: {BROWSER_COOKIE_JAR.get('session_id')}")
     except requests.exceptions.RequestException as e:
         Fl.set_cursor(FL_CURSOR_DEFAULT)
-        renderer.log(f"  Ошибка установки куки: {e}")
+        renderer.log(f"  Error setting cookies: {e}")
 
-    # --- 1. 'cryptography' (с существующими куками) ---
-    renderer.log("\n--- 1. 'cryptography' (с куками) ---")
+    renderer.log("\n--- 1. 'cryptography' (with cookies) ---")
     try:
         Fl.set_cursor(FL_CURSOR_WAIT)
         resp = requests.get("http://example.com", cookies=BROWSER_COOKIE_JAR, timeout=CONFIG.default_timeout)
@@ -382,12 +347,11 @@ def run_full_demo_callback(widget):
         digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
         digest.update(resp.content)
         hash_value = digest.finalize()
-        renderer.log(f"  Хеш контента: {hash_value.hex()[:12]}...")
+        renderer.log(f"  Hash of the content: {hash_value.hex()[:12]}...")
     except requests.exceptions.RequestException as e:
         Fl.set_cursor(FL_CURSOR_DEFAULT)
-        renderer.log(f"  Ошибка: {e}")
+        renderer.log(f"  Error: {e}")
     
-    # --- 2. 'Js2Py' (Execution: ES5.1) ---
     renderer.log("\n--- 2. 'Js2Py' (ES5.1) ---")
     try:
         js_code = """
@@ -401,11 +365,9 @@ def run_full_demo_callback(widget):
         context.execute(js_code)
         renderer.log(f"  Js2Py: js_variable='{context.js_variable}', Keys count={context.calculation}")
     except Exception as e:
-        renderer.log(f"  Js2Py Ошибка: {e}")
+        renderer.log(f"  Js2Py Error: {e}")
 
     renderer.redraw() 
-
-# --- ФУНКЦИИ GUI ---
 
 def update_nav_buttons():
     back_button.deactivate() if not history_manager.can_go_back() else back_button.activate()
@@ -428,8 +390,6 @@ def nav_button_callback(widget):
     url = URL_ABOUT if widget.label() == "About" else URL_CONTACT
     fetch_and_render(url)
 
-
-# --- Инициализация GUI ---
 
 window = Fl_Window(700, 600, "Project Chimera v0.1.5 (Full Stack)")
 window.begin()
@@ -455,6 +415,5 @@ renderer = HTMLRendererWidget(10, 50, 680, 540, HTML_HOME)
 
 window.end()
 
-# Первый запуск
 fetch_and_render(URL_HOME)
 Fl.run()
