@@ -13,7 +13,6 @@ from pydantic import BaseModel, Field
 from collections import deque
 from typing import List, Optional
 
-# --- КОНСТАНТЫ И НАСТРОЙКИ (v0.2.0) ---
 VERSION = "v0.2.0"
 BUG_TRACKER_URL = "https://github.com/myuser/chimera/issues" 
 
@@ -21,42 +20,39 @@ TEST_IMAGE_URL = "http://httpbin.org/image/png"
 TEST_COOKIE_URL = "http://httpbin.org/cookies/set/session_id/abc12345" 
 CELL_WIDTH = 150 
 
-# URLs для демонстрации истории
 URL_HOME = "http://example.com/home"
 URL_ABOUT = "http://example.com/about"
 URL_CONTACT = "http://example.com/contact"
 URL_WIND_ABOUT = "wind://about"
 URL_WIND_FLAGS = "wind://flags"
 
-# СПИСОК БИБЛИОТЕК для пасхалки wind://about
 REQUIRED_LIBS = [
     "pyfltk (GUI)", "requests (Networking, Cookies)", "cryptography (Security)",
     "lxml (HTML/DOM)", "js2py (JavaScript ES5.1)", "Pillow (Images)",
     "pydantic (Data Modeling)"
 ]
 
-# --- HTML-Контент ---
-
+# HTML content
 HTML_HOME = f"""
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Домашняя ({VERSION})</title>
+    <title>Home ({VERSION})</title>
 </head>
 <body>
     <h1>Layout Engine: {VERSION}</h1>
     
-    <section>Это новый HTML5 тег 'section'. (Центрирование текста)</section>
+    <section>It's a new HTML5 tag "section". (Centering text)</section>
     
     <article>
-        <p>А это тег 'article' с параграфом. (Желтый фон)</p>
-        <a href="http://example.com/contact">Ссылка на контакты</a>
+        <p>It's tag 'article' with paragraph. (Yellow background)</p>
+        <a href="http://example.com/contact">Link to contacts (joke)</a>
     </article>
     
-    <h2>Пример Таблицы</h2>
+    <h2>Example of the table</h2>
     <table border="1">
         <tr>
-            <td>Ячейка 1.1</td>
+            <td>Cell 1.1</td>
             <td><img src="{TEST_IMAGE_URL}" width="50" height="50" /></td>
         </tr>
     </table>
@@ -66,33 +62,25 @@ HTML_HOME = f"""
 HTML_ABOUT = """
 <!DOCTYPE html>
 <html>
-<head><title>О Проекте</title></head>
-<body><h1>О нас</h1><p>Project Chimera v0.2.0. Проект-монстр на чистом Python.</p></body>
+<head><title>About project</title></head>
+<body><h1>О нас</h1><p>Project Chimera v0.2.0. A monster project in pure Python.</p></body>
 </html>
-"""
-HTML_CONTACT = """
-<!DOCTYPE html>
-<html>
-<head><title>Связь</title></head>
-<body><h1>Контакты</h1><p>Свяжитесь с нами.</p></body>
-</html>
-"""
 
 # --- Генератор Внутренних Страниц ---
 
 def generate_wind_about_page() -> str:
-    """Генерирует HTML для wind://about с пасхалкой."""
+    """Generating HTML for wind://about with Easter egg."""
     libs_list = "".join([f"<li>{lib}</li>" for lib in REQUIRED_LIBS])
     return f"""
 <!DOCTYPE html>
 <html>
-<head><title>О браузере Chimera</title></head>
+<head><title>About Project "Chimera"</title></head>
 <body>
     <h1>Project Chimera {VERSION}</h1>
-    <p>Браузер-монстр, созданный полностью на Python!</p>
-    <h2>⚙️ Зависимости (Пасхалка)</h2>
+    <p>A monster browser built entirely in Python!</p>
+    <h2>⚙️ Requirements (Easter egg)</h2>
     <ul>{libs_list}</ul>
-    <p>Сообщить об ошибке: <a href="{BUG_TRACKER_URL}">{BUG_TRACKER_URL}</a></p>
+    <p>Link to report a bug: <a href="{BUG_TRACKER_URL}">{BUG_TRACKER_URL}</a></p>
 </body>
 </html>
 """
