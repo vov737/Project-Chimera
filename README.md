@@ -6,7 +6,7 @@
 
 Кто делал: я (vov737) и Gemini 2.5 Flash :)
 
-Сейчас, в исходниках репозитория находится версия 0.2.0 (в релизах будет 0.1.5, затем 0.2.0, их отличия ы системных ссылках браузера и в версии 0.2.0 есть пасхалка, найдите ее), требования: pyfltk requests cryptography lxml js2py Pillow pydantic.
+Сейчас, в исходниках репозитория находится версия 0.2.0 (в релизах будет 0.1.5, затем 0.2.0, их отличия ы системных ссылках браузера и в версии 0.2.0 есть пасхалка, найдите ее), требования: pip install pyfltk requests cryptography lxml js2py Pillow pydantic.
 
 
 
@@ -18,4 +18,4 @@ License: Apache-2.0.
 
 Developed by: me (vov737) and Gemini 2.5 Flash :)
 
-Currently, the repository source code contains version 0.2.0 (the releases will be 0.1.5, then 0.2.0, their differences are in the browser's system links and in version 0.2.0 there is an Easter egg, find it), requirements: pyfltk requests cryptography lxml js2py Pillow pydantic.
+Currently, the repository source code contains version 0.2.0 (the releases will be 0.1.5, then 0.2.0, their differences are in the browser's system links and in version 0.2.0 there is an Easter egg, find it), requirements: pip install pyfltk requests cryptography lxml js2py Pillow pydantic.
