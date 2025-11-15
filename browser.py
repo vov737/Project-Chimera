@@ -14,7 +14,7 @@ from collections import deque
 from typing import List, Optional
 
 VERSION = "v0.2.0"
-BUG_TRACKER_URL = "https://github.com/myuser/chimera/issues" 
+BUG_TRACKER_URL = "https://github.com/vov737/chimera/issues" 
 
 TEST_IMAGE_URL = "http://httpbin.org/image/png"
 TEST_COOKIE_URL = "http://httpbin.org/cookies/set/session_id/abc12345" 
