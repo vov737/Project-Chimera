@@ -8,6 +8,7 @@
 
 Сейчас, в исходниках репозитория находится версия 0.2.0, требования: pyfltk requests cryptography lxml js2py Pillow pydantic.
 
+
 In English (Google Translate): This is the codebase for my browser, called WindBrowser, scheduled for release sometime in winter or spring 2026. I'll reveal the features later, but I'll say it uses a custom rendering engine.
 License: Apache-2.0. 
 Developed by: me (vov737) and Gemini 2.5 Flash :)
