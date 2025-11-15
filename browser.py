@@ -332,10 +332,28 @@ def run_full_demo_callback(widget):
     renderer.log_messages.clear()
     
     renderer.log("--- 0. Cookies: Installing ---")
-    # ... (Логика установки куки) ...
+    try:
+        Fl.set_cursor(FL_CURSOR_WAIT)
+        requests.get(TEST_COOKIE_URL, cookies=BROWSER_COOKIE_JAR, timeout=CONFIG.default_timeout)
+        Fl.set_cursor(FL_CURSOR_DEFAULT)
+        renderer.log(f"  Test cookie installed: {BROWSER_COOKIE_JAR.get('session_id')}")
+    except requests.exceptions.RequestException as e:
+        Fl.set_cursor(FL_CURSOR_DEFAULT)
+        renderer.log(f"  Error setting cookies: {e}")
     
-    renderer.log("\n--- 1. 'cryptography' ---")
-    # ... (Hashing logic) ...
+    renderer.log("\n--- 1. 'cryptography' (with cookies) ---")
+    try:
+        Fl.set_cursor(FL_CURSOR_WAIT)
+        resp = requests.get("http://example.com", cookies=BROWSER_COOKIE_JAR, timeout=CONFIG.default_timeout)
+        Fl.set_cursor(FL_CURSOR_DEFAULT)
+        resp.raise_for_status()
+        digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+        digest.update(resp.content)
+        hash_value = digest.finalize()
+        renderer.log(f"  Hash of the content: {hash_value.hex()[:12]}...")
+    except requests.exceptions.RequestException as e:
+        Fl.set_cursor(FL_CURSOR_DEFAULT)
+        renderer.log(f"  Error: {e}")
     
     renderer.log("\n--- 2. 'Js2Py' (ES5.1) ---")
     try:
