@@ -14,9 +14,13 @@
 Архитектура конвейера:
 
 Parser: Использует lxml для создания DOM Tree.
+
 StylingEngine: Вычисляет CalculatedStyle для каждого узла.
+
 LayoutEngine: Создает дерево LayoutBox с точными координатами (Dimensions) и отступами (EdgeSizes).
+
 PaintingEngine: Визуализирует Box Model, используя fl_rectf и fl_draw.
+
 JSEngine: Запускает скрипты, позволяя им изменять CalculatedStyle через прокси-объекты.
 
 ### Ключевые Возможности
